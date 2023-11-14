@@ -26,6 +26,7 @@ import rclpy
 import rclpy.node
 import rowan
 from std_srvs.srv import Empty
+from tf2_msgs.msg import TFMessage
 
 
 def arrayToGeometryPoint(a):
@@ -185,6 +186,27 @@ class Crazyflie:
         # self.cmdVelocityWorldMsg = VelocityWorld()
         # self.cmdVelocityWorldMsg.header.seq = 0
         # self.cmdVelocityWorldMsg.header.frame_id = '/world'
+
+    ### Original Methods ###
+
+        self.tfSubscription = node.create_subscription(
+            TFMessage, '/tf', self.tf_cb, 1)
+
+    def tf_cb(self, msg):
+        self.transforms = msg.transforms
+    
+    def position(self):
+        # child_frame_idがcf_nameと一致するものを探す
+        if self.transforms is None:
+            raise Exception("No transforms received yet")
+        for transform in self.transforms:
+            if "/"+transform.child_frame_id == self.prefix:
+                # print([transform.transform.translation.x, transform.transform.translation.y, transform.transform.translation.z])
+                return np.array([transform.transform.translation.x, transform.transform.translation.y, transform.transform.translation.z])
+        # 見つからなかったらエラー
+        raise Exception("tf not found")
+
+    ########################
 
     # def setGroupMask(self, groupMask):
     #     """Sets the group mask bits for this robot.
@@ -788,6 +810,18 @@ class CrazyflieServer(rclpy.node.Node):
             # For legacy crazyswarm1 code, also provide crazyfliesById
             cfid = int(cf.uri[-2:], 16)
             self.crazyfliesById[cfid] = cf
+    ### Original Methods ############################################################
+        self.tfSubscription = self.create_subscription(TFMessage, '/tf', self.tf_cb, 1)
+
+    def tf_cb(self, msg):
+        self.transforms = msg.transforms
+
+    def position(self):
+        if self.transforms is None:
+            raise Exception("No transforms received yet")
+        return self.transforms
+    
+    ################################################################################
 
     def emergency(self):
         """

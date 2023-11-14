@@ -62,25 +62,25 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument('backend', default_value='cpp'),
         DeclareLaunchArgument('debug', default_value='False'),
-        Node(
-            package='motion_capture_tracking',
-            executable='motion_capture_tracking_node',
-            condition=LaunchConfigurationNotEquals('backend','sim'),
-            name='motion_capture_tracking',
-            output='screen',
-            parameters=[motion_capture_params]
-        ),
+        # Node(
+        #     package='motion_capture_tracking',
+        #     executable='motion_capture_tracking_node',
+        #     condition=LaunchConfigurationNotEquals('backend','sim'),
+        #     name='motion_capture_tracking',
+        #     output='screen',
+        #     parameters=[motion_capture_params]
+        # ),
         Node(
             package='crazyflie',
             executable='teleop',
             name='teleop',
             remappings=[
                 ('emergency', 'all/emergency'),
-                ('takeoff', 'cf6/takeoff'),
-                ('land', 'cf6/land'),
-                ('cmd_vel_legacy', 'cf6/cmd_vel_legacy'),
-                ('cmd_full_state', 'cf6/cmd_full_state'),
-                ('notify_setpoints_stop', 'cf6/notify_setpoints_stop'),
+                ('takeoff', 'cf1/takeoff'),
+                ('land', 'cf1/land'),
+                ('cmd_vel_legacy', 'cf1/cmd_vel_legacy'),
+                ('cmd_full_state', 'cf1/cmd_full_state'),
+                ('notify_setpoints_stop', 'cf1/notify_setpoints_stop'),
             ],
             parameters=[teleop_params]
         ),

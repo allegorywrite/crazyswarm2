@@ -106,6 +106,7 @@ install(PROGRAMS
   scripts/chooser.py
   scripts/vel_mux.py
   scripts/cfmult.py
+  scripts/cfs_interpreter_node.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

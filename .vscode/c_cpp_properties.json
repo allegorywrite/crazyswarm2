@@ -1,0 +1,30 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/torobo/ros2_ws/install/speak_ros_voicevox_plugin/include/**",
+        "/home/torobo/ros2_ws/install/speak_ros/include/**",
+        "/home/torobo/ros2_ws/install/speak_ros_interfaces/include/**",
+        "/home/torobo/ros2_ws/install/whisper_ros/include/**",
+        "/home/torobo/ros2_ws/install/whisper_msgs/include/**",
+        "/home/torobo/ros2_ws/install/motion_capture_tracking_interfaces/include/**",
+        "/home/torobo/ros2_ws/install/crazyflie_interfaces/include/**",
+        "/home/torobo/ros2_ws/install/chatgpt_ros_interfaces/include/**",
+        "/home/torobo/ros2_ws/install/audio_common_msgs/include/**",
+        "/opt/ros/galactic/include/**",
+        "/home/torobo/ros2_ws/src/whisper_ros/whisper_ros/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
