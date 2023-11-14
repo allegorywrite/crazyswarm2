@@ -2,7 +2,7 @@
 robots:
   cf231:
     enabled: true
-    uri: radio://0/100/2M/E7E7E7E701
+    uri: radio://0/80/2M/E7E7E7E7E7
     initial_position: [0, 0, 0]
     type: cf21  # see robot_types
     # firmware_params:
@@ -72,12 +72,10 @@ all:
   # firmware logging for all drones (use robot_types/type_name to set per type, or
   # robots/drone_name to set per drone)
   firmware_logging:
-    enabled: true
+    enabled: false
     default_topics:
      # remove to disable default topic
       pose:
-        frequency: 10 # Hz
-      odom:
         frequency: 10 # Hz
     #custom_topics:
     #  topic_name1:
@@ -103,8 +101,8 @@ all:
     locSrv:
       extPosStdDev: 1e-3
       extQuatStdDev: 0.5e-1
-    kalman:
-      resetEstimation: 1
+    # kalman:
+    #   resetEstimation: 1
   broadcasts:
     num_repeats: 15 # number of times broadcast commands are repeated
     delay_between_repeats_ms: 1 # delay in milliseconds between individual repeats
