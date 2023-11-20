@@ -32,6 +32,8 @@ from geometry_msgs.msg import Twist
 from geometry_msgs.msg import PoseStamped, TransformStamped
 from sensor_msgs.msg import LaserScan
 from nav_msgs.msg import Odometry
+from sensor_msgs.msg import Imu
+from geometry_msgs.msg import Quaternion
 
 import tf_transformations
 from tf2_ros import TransformBroadcaster
@@ -70,17 +72,20 @@ class CrazyflieServer(Node):
         # Assign default topic types, variables and callbacks
         self.default_log_type = {"pose": PoseStamped,
                                 "scan": LaserScan,
-                                "odom": Odometry}
+                                "odom": Odometry,
+                                "imu": Imu}
         self.default_log_vars = {"pose": ['stateEstimate.x', 'stateEstimate.y', 'stateEstimate.z',
                                          'stabilizer.roll', 'stabilizer.pitch', 'stabilizer.yaw'],
                                 "scan": ['range.front', 'range.left', 'range.back', 'range.right'],
                                 "odom": ['stateEstimate.x', 'stateEstimate.y', 'stateEstimate.z',
                                          'stabilizer.yaw', 'stabilizer.roll', 'stabilizer.pitch',
                                          'kalman.statePX', 'kalman.statePY', 'kalman.statePZ',
-                                         'gyro.z', 'gyro.x', 'gyro.y']}
+                                         'gyro.z', 'gyro.x', 'gyro.y'],
+                                "imu": ['acc.x', 'acc.y', 'acc.z', 'gyro.x', 'gyro.y', 'gyro.z']}
         self.default_log_fnc = {"pose": self._log_pose_data_callback,
                                "scan": self._log_scan_data_callback,
-                               "odom": self._log_odom_data_callback}
+                               "odom": self._log_odom_data_callback,
+                               "imu": self._log_imu_data_callback}
 
         self.world_tf_name = "world"
         try:
@@ -540,6 +545,33 @@ class CrazyflieServer(Node):
         t_base.transform.rotation.z = q[2]
         t_base.transform.rotation.w = q[3]
         self.tfbr.sendTransform(t_base)
+
+    def _log_imu_data_callback(self, timestamp, data, logconf, uri):
+        """
+        Once imu data is retrieved from the Crazyflie, 
+            send out the ROS 2 topic for Imu
+        """
+        cf_name = self.cf_dict[uri]
+
+        x = data.get('acc.x')
+        y = data.get('acc.y')
+        z = data.get('acc.z')
+        roll = radians(data.get('gyro.x'))
+        pitch = radians(data.get('gyro.y'))
+        yaw = radians(data.get('gyro.z'))
+        q = tf_transformations.quaternion_from_euler(roll, pitch, yaw)
+
+        msg = Imu()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.frame_id = cf_name
+        msg.linear_acceleration.x = x
+        msg.linear_acceleration.y = y
+        msg.linear_acceleration.z = z
+        msg.orientation.x = q[0]
+        msg.orientation.y = q[1]
+        msg.orientation.z = q[2]
+        msg.orientation.w = q[3]
+        self.swarm._cfs[uri].logging["imu_publisher"].publish(msg)
 
     def _log_custom_data_callback(self, timestamp, data, logconf, uri):
         """
